@@ -1,0 +1,212 @@
+package butil
+
+import (
+	"strconv"
+	"strings"
+)
+
+func ToBool(in interface{}) (out bool) {
+	switch v := in.(type) {
+	case int:
+		if v != 0 {
+			out = true
+		} else {
+			out = false
+		}
+	case int64:
+		if v != 0 {
+			out = true
+		} else {
+			out = false
+		}
+	case uint:
+		if v != 0 {
+			out = true
+		} else {
+			out = false
+		}
+	case uint64:
+		if v != 0 {
+			out = true
+		} else {
+			out = false
+		}
+	case uint32:
+		if v != 0 {
+			out = true
+		} else {
+			out = false
+		}
+	case float64:
+		if v != 0 {
+			out = true
+		} else {
+			out = false
+		}
+	case float32:
+		if v != 0 {
+			out = true
+		} else {
+			out = false
+		}
+	case string:
+		if strings.EqualFold(v, "true") || strings.EqualFold(v, "t") || strings.EqualFold(v, "yes") || strings.EqualFold(v, "y") || strings.EqualFold(v, "1") || strings.EqualFold(v, "on") {
+			out = true
+		} else {
+			out = false
+		}
+	case []byte:
+		tmp := string(v)
+		if strings.EqualFold(tmp, "true") || strings.EqualFold(tmp, "t") || strings.EqualFold(tmp, "yes") || strings.EqualFold(tmp, "y") || strings.EqualFold(tmp, "1") || strings.EqualFold(tmp, "on") {
+			out = true
+		} else {
+			out = false
+		}
+	case bool:
+		if in.(bool) {
+			out = true
+		} else {
+			out = false
+		}
+	default:
+		out = false
+	}
+
+	return
+}
+
+func ToInt(in interface{}) (out int) {
+	switch v := in.(type) {
+	case int:
+		out = v
+	case int64:
+		out = int(v)
+	case uint:
+		out = int(v)
+	case uint64:
+		out = int(v)
+	case uint32:
+		out = int(v)
+	case float64:
+		out = int(v)
+	case float32:
+		out = int(v)
+	case string:
+		out, _ = strconv.Atoi(v)
+	case byte:
+		out = int(v)
+	case []byte:
+		out, _ = strconv.Atoi(string(v))
+	case bool:
+		if in.(bool) {
+			out = 1
+		} else {
+			out = 0
+		}
+	default:
+		out = 0
+	}
+
+	return
+}
+
+func ToInt64(in interface{}) (out int64) {
+	switch v := in.(type) {
+	case int:
+		out = int64(v)
+	case int64:
+		out = int64(v)
+	case uint:
+		out = int64(v)
+	case uint64:
+		out = int64(v)
+	case uint32:
+		out = int64(v)
+	case float64:
+		out = int64(v)
+	case float32:
+		out = int64(v)
+	case string:
+		out, _ = strconv.ParseInt(v, 10, 0)
+	case byte:
+		out = int64(v)
+	case []byte:
+		out, _ = strconv.ParseInt(string(v), 10, 0)
+	case bool:
+		if in.(bool) {
+			out = 1
+		} else {
+			out = 0
+		}
+	default:
+		out = 0
+	}
+
+	return
+}
+
+func ToFloat64(in interface{}) (out float64) {
+	switch v := in.(type) {
+	case int:
+		out = float64(v)
+	case int64:
+		out = float64(v)
+	case uint:
+		out = float64(v)
+	case uint64:
+		out = float64(v)
+	case uint32:
+		out = float64(v)
+	case float64:
+		out = float64(v)
+	case float32:
+		out = float64(v)
+	case string:
+		out, _ = strconv.ParseFloat(in.(string), 64)
+	case []byte:
+		out, _ = strconv.ParseFloat(string(v), 64)
+	case bool:
+		if in.(bool) {
+			out = 1
+		} else {
+			out = 0
+		}
+	default:
+		out = 0
+	}
+
+	return
+}
+
+func ToString(in interface{}) (out string) {
+	switch v := in.(type) {
+	case float64:
+		out = strconv.FormatFloat(in.(float64), 'f', 6, 64)
+	case float32:
+		out = strconv.FormatFloat(float64(in.(float32)), 'f', 6, 32)
+	case int:
+		out = strconv.FormatInt(int64(in.(int)), 10)
+	case int64:
+		out = strconv.FormatInt(in.(int64), 10)
+	case uint:
+		out = strconv.FormatUint(uint64(in.(uint)), 10)
+	case uint64:
+		out = strconv.FormatUint(in.(uint64), 10)
+	case uint32:
+		out = strconv.FormatUint(uint64(in.(uint32)), 10)
+	case string:
+		out = in.(string)
+	case []byte:
+		out = string(v)
+	case bool:
+		if in.(bool) {
+			out = "true"
+		} else {
+			out = "false"
+		}
+	default:
+		out = ""
+	}
+
+	return
+}

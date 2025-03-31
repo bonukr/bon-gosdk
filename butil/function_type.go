@@ -145,6 +145,78 @@ func ToInt64(in interface{}) (out int64) {
 	return
 }
 
+func ToUint(in interface{}) (out uint) {
+	switch v := in.(type) {
+	case int:
+		out = uint(v)
+	case int64:
+		out = uint(v)
+	case uint:
+		out = uint(v)
+	case uint64:
+		out = uint(v)
+	case uint32:
+		out = uint(v)
+	case float64:
+		out = uint(v)
+	case float32:
+		out = uint(v)
+	case string:
+		tmp, _ := strconv.ParseUint(v, 10, 0)
+		out = uint(tmp)
+	case byte:
+		out = uint(v)
+	case []byte:
+		tmp, _ := strconv.ParseUint(string(v), 10, 0)
+		out = uint(tmp)
+	case bool:
+		if in.(bool) {
+			out = 1
+		} else {
+			out = 0
+		}
+	default:
+		out = 0
+	}
+
+	return
+}
+
+func ToUint64(in interface{}) (out uint64) {
+	switch v := in.(type) {
+	case int:
+		out = uint64(v)
+	case int64:
+		out = uint64(v)
+	case uint:
+		out = uint64(v)
+	case uint64:
+		out = v
+	case uint32:
+		out = uint64(v)
+	case float64:
+		out = uint64(v)
+	case float32:
+		out = uint64(v)
+	case string:
+		out, _ = strconv.ParseUint(v, 10, 64)
+	case byte:
+		out = uint64(v)
+	case []byte:
+		out, _ = strconv.ParseUint(string(v), 10, 64)
+	case bool:
+		if in.(bool) {
+			out = 1
+		} else {
+			out = 0
+		}
+	default:
+		out = 0
+	}
+
+	return
+}
+
 func ToFloat64(in interface{}) (out float64) {
 	switch v := in.(type) {
 	case int:

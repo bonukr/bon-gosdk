@@ -1,6 +1,7 @@
 package butil
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -56,4 +57,46 @@ func UnitByteToByte(val uint64, unit string) uint64 {
 	}
 
 	return 0
+}
+
+func ShortBytes(val uint64) string {
+	const unit = "kMGTPE"
+	const mul = 1000
+
+	if val < mul {
+		return fmt.Sprintf("%d B", val)
+	}
+
+	div, exp := mul, 0
+	for n := val / mul; n >= mul; n /= mul {
+		div *= mul
+		exp++
+	}
+
+	if exp >= len(unit) {
+		return ""
+	} else {
+		return fmt.Sprintf("%.2f %cB", float64(val)/float64(div), unit[exp])
+	}
+}
+
+func ShortBytesIEC(val uint64) string {
+	const unit = "kMGTPE"
+	const mul = 1024
+
+	if val < mul {
+		return fmt.Sprintf("%d B", val)
+	}
+
+	div, exp := mul, 0
+	for n := val / mul; n >= mul; n /= mul {
+		div *= mul
+		exp++
+	}
+
+	if exp >= len(unit) {
+		return ""
+	} else {
+		return fmt.Sprintf("%.2f %cB", float64(val)/float64(div), unit[exp])
+	}
 }

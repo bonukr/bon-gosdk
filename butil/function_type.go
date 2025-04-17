@@ -3,6 +3,7 @@ package butil
 import (
 	"strconv"
 	"strings"
+	"unsafe"
 )
 
 func ToBool(in interface{}) (out bool) {
@@ -76,6 +77,8 @@ func ToBool(in interface{}) (out bool) {
 }
 
 func ToInt(in interface{}) (out int) {
+	var err error
+
 	switch v := in.(type) {
 	case int:
 		out = v
@@ -91,12 +94,20 @@ func ToInt(in interface{}) (out int) {
 		out = int(v)
 	case float32:
 		out = int(v)
-	case string:
-		out, _ = strconv.Atoi(v)
 	case byte:
 		out = int(v)
+	case string:
+		out, err = strconv.Atoi(string(v))
+		if err != nil {
+			tmp, _ := strconv.ParseFloat(v, int(unsafe.Sizeof(int(0)))*8)
+			out = int(tmp)
+		}
 	case []byte:
-		out, _ = strconv.Atoi(string(v))
+		out, err = strconv.Atoi(string(v))
+		if err != nil {
+			tmp, _ := strconv.ParseFloat(string(v), int(unsafe.Sizeof(int(0)))*8)
+			out = int(tmp)
+		}
 	case bool:
 		if in.(bool) {
 			out = 1
@@ -111,6 +122,8 @@ func ToInt(in interface{}) (out int) {
 }
 
 func ToInt64(in interface{}) (out int64) {
+	var err error
+
 	switch v := in.(type) {
 	case int:
 		out = int64(v)
@@ -126,12 +139,20 @@ func ToInt64(in interface{}) (out int64) {
 		out = int64(v)
 	case float32:
 		out = int64(v)
-	case string:
-		out, _ = strconv.ParseInt(v, 10, 0)
 	case byte:
 		out = int64(v)
+	case string:
+		out, err = strconv.ParseInt(v, 10, 0)
+		if err != nil {
+			tmp, _ := strconv.ParseFloat(v, int(unsafe.Sizeof(int(0)))*8)
+			out = int64(tmp)
+		}
 	case []byte:
 		out, _ = strconv.ParseInt(string(v), 10, 0)
+		if err != nil {
+			tmp, _ := strconv.ParseFloat(string(v), int(unsafe.Sizeof(int(0)))*8)
+			out = int64(tmp)
+		}
 	case bool:
 		if in.(bool) {
 			out = 1
@@ -183,6 +204,8 @@ func ToUint(in interface{}) (out uint) {
 }
 
 func ToUint64(in interface{}) (out uint64) {
+	var err error
+
 	switch v := in.(type) {
 	case int:
 		out = uint64(v)
@@ -198,12 +221,20 @@ func ToUint64(in interface{}) (out uint64) {
 		out = uint64(v)
 	case float32:
 		out = uint64(v)
-	case string:
-		out, _ = strconv.ParseUint(v, 10, 64)
 	case byte:
 		out = uint64(v)
+	case string:
+		out, err = strconv.ParseUint(v, 10, 64)
+		if err != nil {
+			tmp, _ := strconv.ParseFloat(v, int(unsafe.Sizeof(int(0)))*8)
+			out = uint64(tmp)
+		}
 	case []byte:
-		out, _ = strconv.ParseUint(string(v), 10, 64)
+		out, err = strconv.ParseUint(string(v), 10, 64)
+		if err != nil {
+			tmp, _ := strconv.ParseFloat(string(v), int(unsafe.Sizeof(int(0)))*8)
+			out = uint64(tmp)
+		}
 	case bool:
 		if in.(bool) {
 			out = 1

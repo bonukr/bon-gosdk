@@ -1,4 +1,4 @@
-package butil
+package butils
 
 import "fmt"
 

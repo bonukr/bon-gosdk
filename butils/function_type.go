@@ -3,6 +3,7 @@ package butils
 import (
 	"strconv"
 	"strings"
+	"time"
 	"unsafe"
 )
 
@@ -299,6 +300,12 @@ func ToString(in interface{}) (out string) {
 		out = strconv.FormatUint(uint64(in.(uint32)), 10)
 	case string:
 		out = in.(string)
+	case *string:
+		if v == nil {
+			return ""
+		} else {
+			out = *v
+		}
 	case []byte:
 		out = string(v)
 	case bool:
@@ -307,11 +314,13 @@ func ToString(in interface{}) (out string) {
 		} else {
 			out = "false"
 		}
-	case *string:
+	case time.Time:
+		out = v.Format(time.RFC3339)
+	case *time.Time:
 		if v == nil {
 			return ""
 		} else {
-			out = *v
+			out = v.Format(time.RFC3339)
 		}
 	default:
 		out = ""

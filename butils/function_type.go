@@ -307,6 +307,12 @@ func ToString(in interface{}) (out string) {
 		} else {
 			out = "false"
 		}
+	case *string:
+		if v == nil {
+			return ""
+		} else {
+			out = *v
+		}
 	default:
 		out = ""
 	}

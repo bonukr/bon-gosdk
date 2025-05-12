@@ -149,7 +149,7 @@ func ToInt64(in interface{}) (out int64) {
 			out = int64(tmp)
 		}
 	case []byte:
-		out, _ = strconv.ParseInt(string(v), 10, 0)
+		out, err = strconv.ParseInt(string(v), 10, 0)
 		if err != nil {
 			tmp, _ := strconv.ParseFloat(string(v), int(unsafe.Sizeof(int(0)))*8)
 			out = int64(tmp)

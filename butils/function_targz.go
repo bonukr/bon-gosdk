@@ -10,8 +10,64 @@ import (
 	"strings"
 )
 
+func CreateTarGz(destFile string, srcDir string) error {
+	// 출력 파일 생성
+	outFile, err := os.Create(destFile)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer outFile.Close()
+
+	// gzip writer → tar writer 생성
+	gzw := gzip.NewWriter(outFile)
+	defer gzw.Close()
+
+	tw := tar.NewWriter(gzw)
+	defer tw.Close()
+
+	// srcDir 기준으로 모든 파일 순회
+	return filepath.Walk(srcDir, func(file string, fi os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// tar 헤더 생성
+		header, err := tar.FileInfoHeader(fi, fi.Name())
+		if err != nil {
+			return err
+		}
+
+		// 경로 상대화 (압축 파일 내에 경로 보존)
+		relPath, err := filepath.Rel(srcDir, file)
+		if err != nil {
+			return err
+		}
+		header.Name = relPath
+
+		// 헤더 기록
+		if err := tw.WriteHeader(header); err != nil {
+			return err
+		}
+
+		// 디렉토리는 내용 없음
+		if fi.IsDir() {
+			return nil
+		}
+
+		// 파일 내용 복사
+		f, err := os.Open(file)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		_, err = io.Copy(tw, f)
+		return err
+	})
+}
+
 // createTarGz creates a tar.gz archive with the given paths
-func CreateTarGz(output string, paths []string, useStopOnErro bool) error {
+func CreateTarGzFromList(output string, paths []string, useStopOnErro bool) error {
 	outFile, err := os.Create(output)
 	if err != nil {
 		return err

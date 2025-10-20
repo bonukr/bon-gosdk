@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -20,20 +19,38 @@ func IsLinux() bool {
 	}
 }
 
-func GetLinuxOsRelease() (string, string, error) {
+type ResLinuxOsRelease struct {
+	Name    string
+	Version string
+
+	Major int
+	Minor int
+	Patch int
+	Extra string
+}
+
+func GetLinuxOsRelease() (ResLinuxOsRelease, error) {
 	const fname = "/etc/os-release"
 	const keyname_name = "name"
 	const keyname_version = "version_id"
 
+	// init
+	var ret ResLinuxOsRelease
+	{
+		ret.Major = -1
+		ret.Minor = -1
+		ret.Patch = -1
+	}
+
 	// check
 	if !IsLinux() {
-		return "", "", fmt.Errorf("not linux")
+		return ret, fmt.Errorf("not linux")
 	}
 
 	// open
 	file, err := os.Open(fname)
 	if err != nil {
-		return "", "", err
+		return ret, err
 	}
 	defer file.Close()
 
@@ -61,22 +78,47 @@ func GetLinuxOsRelease() (string, string, error) {
 		}
 
 		if err := scanner.Err(); err != nil {
-			return "", "", err
+			return ret, err
 		}
 	}
 
 	// result
-	name := datas[keyname_name]
-	version := datas[keyname_version]
-	return name, version, nil
+	ret.Name = datas[keyname_name]
+	ret.Version = datas[keyname_version]
+	{
+		// split
+		splitData := strings.SplitN(ret.Version, "-", 2)
+
+		// version (숫자.숫자.숫자 형태 추출)
+		if len(splitData) >= 1 {
+			tmp := strings.Split(splitData[0], ".")
+			if len(tmp) >= 1 {
+				ret.Major, _ = strconv.Atoi(tmp[0])
+			}
+			if len(tmp) >= 2 {
+				ret.Minor, _ = strconv.Atoi(tmp[1])
+			}
+			if len(tmp) >= 3 {
+				ret.Patch, _ = strconv.Atoi(tmp[2])
+			}
+		}
+
+		// extra
+		if len(splitData) >= 2 {
+			ret.Extra = strings.TrimSpace(splitData[1])
+		}
+	}
+
+	return ret, nil
 }
 
 type ResLinuxKernelVersion struct {
 	Version string
-	Major   int
-	Minor   int
-	Patch   int
-	Extra   string
+
+	Major int
+	Minor int
+	Patch int
+	Extra string
 }
 
 func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
@@ -120,15 +162,16 @@ func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
 
 		// version (숫자.숫자.숫자 형태 추출)
 		if len(splitData) >= 1 {
-			re := regexp.MustCompile(`^(\d+)\.(\d+)\.(\d+)`)
-			matches := re.FindStringSubmatch(splitData[0])
-			if len(matches) != 4 {
-				return ret, fmt.Errorf("invalid kernel version format: %s", data)
+			tmp := strings.Split(splitData[0], ".")
+			if len(tmp) >= 1 {
+				ret.Major, _ = strconv.Atoi(tmp[0])
 			}
-
-			ret.Major, _ = strconv.Atoi(matches[1])
-			ret.Minor, _ = strconv.Atoi(matches[2])
-			ret.Patch, _ = strconv.Atoi(matches[3])
+			if len(tmp) >= 2 {
+				ret.Minor, _ = strconv.Atoi(tmp[1])
+			}
+			if len(tmp) >= 3 {
+				ret.Patch, _ = strconv.Atoi(tmp[2])
+			}
 		}
 
 		// extra

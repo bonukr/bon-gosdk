@@ -116,10 +116,10 @@ type ResNetworkInterfaceAddress struct {
 }
 
 type ResNetworkInterface struct {
-	Type      string                       `json:"type"`      // 인터페이스 타입 (Physical, Virtual 등)
-	Name      string                       `json:"name"`      // 인터페이스 이름
-	Mac       string                       `json:"mac"`       // MAC 주소
-	Addresses []ResNetworkInterfaceAddress `json:"addresses"` // Addresses
+	Type      string                       `json:"type"`                // 인터페이스 타입 (Physical, Virtual 등)
+	Name      string                       `json:"name"`                // 인터페이스 이름
+	Mac       string                       `json:"mac"`                 // MAC 주소
+	Addresses []ResNetworkInterfaceAddress `json:"addresses,omitempty"` // Addresses
 }
 
 // GetPhysicalInterfaces : 물리 네트워크 인터페이스 목록 조회 함수

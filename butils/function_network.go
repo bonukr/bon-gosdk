@@ -66,7 +66,7 @@ func GetPhysicalInterfaces() ([]ResPhysicalInterface, error) {
 			if os.IsNotExist(err) {
 				continue // device 디렉토리가 없으면 가상 인터페이스
 			} else {
-				fmt.Printf("_butils.GetPhysicalInterfaces: failed to os.Stat: %s", err)
+				fmt.Printf("_butils.GetPhysicalInterfaces: os.Stat failed: %s", err)
 				continue
 			}
 		}
@@ -79,13 +79,13 @@ func GetPhysicalInterfaces() ([]ResPhysicalInterface, error) {
 
 		// address
 		if addrs, err := iface.Addrs(); err != nil {
-			fmt.Printf("_butils.GetPhysicalInterfaces: failed to iface.Addrs: %s", err)
+			fmt.Printf("_butils.GetPhysicalInterfaces: iface.Addrs failed: %s", err)
 		} else {
 			for _, addr := range addrs {
 				// CIDR를 넷마스크로 변환
 				ip, ipNet, err := net.ParseCIDR(addr.String())
 				if err != nil {
-					fmt.Printf("_butils.GetPhysicalInterfaces: failed to net.ParseCIDR: %s", err)
+					fmt.Printf("_butils.GetPhysicalInterfaces: net.ParseCIDR failed: %s", err)
 					continue
 				}
 

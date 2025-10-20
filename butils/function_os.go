@@ -20,13 +20,15 @@ func IsLinux() bool {
 }
 
 type ResLinuxOsRelease struct {
-	Name    string
-	Version string
+	Name string
 
-	Major int
-	Minor int
-	Patch int
-	Extra string
+	VersionString string
+	Version       struct {
+		Major int
+		Minor int
+		Patch int
+		Extra string
+	}
 }
 
 func GetLinuxOsRelease() (ResLinuxOsRelease, error) {
@@ -77,28 +79,28 @@ func GetLinuxOsRelease() (ResLinuxOsRelease, error) {
 
 	// result
 	ret.Name = datas[keyname_name]
-	ret.Version = datas[keyname_version]
+	ret.VersionString = datas[keyname_version]
 	{
 		// split
-		splitData := strings.SplitN(ret.Version, "-", 2)
+		splitData := strings.SplitN(ret.VersionString, "-", 2)
 
 		// version (숫자.숫자.숫자 형태 추출)
 		if len(splitData) >= 1 {
 			tmp := strings.Split(splitData[0], ".")
 			if len(tmp) >= 1 {
-				ret.Major, _ = strconv.Atoi(tmp[0])
+				ret.Version.Major, _ = strconv.Atoi(tmp[0])
 			}
 			if len(tmp) >= 2 {
-				ret.Minor, _ = strconv.Atoi(tmp[1])
+				ret.Version.Minor, _ = strconv.Atoi(tmp[1])
 			}
 			if len(tmp) >= 3 {
-				ret.Patch, _ = strconv.Atoi(tmp[2])
+				ret.Version.Patch, _ = strconv.Atoi(tmp[2])
 			}
 		}
 
 		// extra
 		if len(splitData) >= 2 {
-			ret.Extra = strings.TrimSpace(splitData[1])
+			ret.Version.Extra = strings.TrimSpace(splitData[1])
 		}
 	}
 
@@ -106,12 +108,13 @@ func GetLinuxOsRelease() (ResLinuxOsRelease, error) {
 }
 
 type ResLinuxKernelVersion struct {
-	Version string
-
-	Major int
-	Minor int
-	Patch int
-	Extra string
+	VersionString string
+	Version       struct {
+		Major int
+		Minor int
+		Patch int
+		Extra string
+	}
 }
 
 func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
@@ -141,7 +144,7 @@ func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
 	// result
 	{
 		// full
-		ret.Version = strings.TrimSpace(data)
+		ret.VersionString = strings.TrimSpace(data)
 
 		// split
 		splitData := strings.SplitN(data, "-", 2)
@@ -150,19 +153,19 @@ func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
 		if len(splitData) >= 1 {
 			tmp := strings.Split(splitData[0], ".")
 			if len(tmp) >= 1 {
-				ret.Major, _ = strconv.Atoi(tmp[0])
+				ret.Version.Major, _ = strconv.Atoi(tmp[0])
 			}
 			if len(tmp) >= 2 {
-				ret.Minor, _ = strconv.Atoi(tmp[1])
+				ret.Version.Minor, _ = strconv.Atoi(tmp[1])
 			}
 			if len(tmp) >= 3 {
-				ret.Patch, _ = strconv.Atoi(tmp[2])
+				ret.Version.Patch, _ = strconv.Atoi(tmp[2])
 			}
 		}
 
 		// extra
 		if len(splitData) >= 2 {
-			ret.Extra = strings.TrimSpace(splitData[1])
+			ret.Version.Extra = strings.TrimSpace(splitData[1])
 		}
 	}
 

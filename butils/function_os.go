@@ -22,6 +22,8 @@ func IsLinux() bool {
 
 func GetLinuxOsRelease() (string, string, error) {
 	const fname = "/etc/os-release"
+	const keyname_name = "name"
+	const keyname_version = "version_id"
 
 	// check
 	if !IsLinux() {
@@ -53,7 +55,7 @@ func GetLinuxOsRelease() (string, string, error) {
 				continue
 			}
 
-			key := strings.TrimSpace(parts[0])
+			key := strings.ToLower(strings.TrimSpace(parts[0]))
 			value := strings.Trim(strings.TrimSpace(parts[1]), `"`) // remove quotes if present
 			datas[key] = value
 		}
@@ -63,14 +65,9 @@ func GetLinuxOsRelease() (string, string, error) {
 		}
 	}
 
-	// revise (lowercase to key)
-	for k, v := range datas {
-		datas[k] = strings.ToLower(v)
-	}
-
 	// result
-	name := datas["name"]
-	version := datas["version_id"]
+	name := datas[keyname_name]
+	version := datas[keyname_version]
 	return name, version, nil
 }
 
@@ -115,19 +112,14 @@ func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
 
 	// result
 	{
+		// full
+		ret.Version = strings.TrimSpace(data)
+
+		// split
 		splitData := strings.SplitN(data, "-", 2)
-		if len(splitData) == 0 {
-			return ret, fmt.Errorf("invalid kernel version format: %s", data)
-		}
 
-		// version, extra
-		ret.Version = strings.TrimSpace(splitData[0])
-		if len(splitData) >= 2 {
-			ret.Extra = strings.TrimSpace(splitData[1])
-		}
-
-		// major, minor, patch (숫자.숫자.숫자 형태 추출)
-		{
+		// version (숫자.숫자.숫자 형태 추출)
+		if len(splitData) >= 1 {
 			re := regexp.MustCompile(`^(\d+)\.(\d+)\.(\d+)`)
 			matches := re.FindStringSubmatch(splitData[0])
 			if len(matches) != 4 {
@@ -137,6 +129,11 @@ func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
 			ret.Major, _ = strconv.Atoi(matches[1])
 			ret.Minor, _ = strconv.Atoi(matches[2])
 			ret.Patch, _ = strconv.Atoi(matches[3])
+		}
+
+		// extra
+		if len(splitData) >= 2 {
+			ret.Extra = strings.TrimSpace(splitData[1])
 		}
 	}
 

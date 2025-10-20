@@ -30,12 +30,12 @@ func CidrToNetmask(bits int) (string, error) {
 }
 
 type ResPhysicalInterface struct {
-	Name    string // 인터페이스 이름
-	Type    string // 인터페이스 타입 (Physical, Virtual 등)
-	Mac     string // MAC 주소
-	Cidr    string // Classless Inter-Domain Routing
-	Ip      string // IPv4 주소
-	Netmask string // 넷마스크
+	Name    string `json:"name"`    // 인터페이스 이름
+	Type    string `json:"type"`    // 인터페이스 타입 (Physical, Virtual 등)
+	Mac     string `json:"mac"`     // MAC 주소
+	Cidr    string `json:"cidr"`    // Classless Inter-Domain Routing
+	Ip      string `json:"ip"`      // IPv4 주소
+	Netmask string `json:"netmask"` // 넷마스크
 }
 
 // GetPhysicalInterfaces : 물리 네트워크 인터페이스 목록 조회 함수

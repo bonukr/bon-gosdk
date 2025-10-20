@@ -33,14 +33,7 @@ func GetLinuxOsRelease() (ResLinuxOsRelease, error) {
 	const fname = "/etc/os-release"
 	const keyname_name = "name"
 	const keyname_version = "version_id"
-
-	// init
 	var ret ResLinuxOsRelease
-	{
-		ret.Major = -1
-		ret.Minor = -1
-		ret.Patch = -1
-	}
 
 	// check
 	if !IsLinux() {
@@ -124,14 +117,7 @@ type ResLinuxKernelVersion struct {
 func GetLinuxKernelVersion() (ResLinuxKernelVersion, error) {
 	const execCmd = "/usr/bin/uname"
 	const execArgs = "-r"
-
-	// init
 	var ret ResLinuxKernelVersion
-	{
-		ret.Major = -1
-		ret.Minor = -1
-		ret.Patch = -1
-	}
 
 	// check
 	if !IsLinux() {

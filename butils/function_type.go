@@ -328,3 +328,10 @@ func ToString(in interface{}) (out string) {
 
 	return
 }
+
+func ToMaskString(in interface{}) (out string) {
+	tmp := ToString(in)
+	out = strings.Repeat("*", len(tmp))
+
+	return
+}

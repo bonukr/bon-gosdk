@@ -337,7 +337,8 @@ func ToMaskString(in interface{}) (out string) {
 }
 
 // in: 입력값 (ex 0xA1b2, 0Xa1B2)
-// dft: 오류(변환실패) 또는 int64 최대 값을 초과한 경우 반환 될 기본값
+//   - 빈문자열(") 일 경우 0 반환됨.
+//   - 변환 실패 또는 int64 최대 값을 초과한 경우 dft 값이 반환됨
 func HexToInt64(in string, dft int64) int64 {
 	// Trim spaces
 	in = strings.TrimSpace(in)

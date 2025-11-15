@@ -335,3 +335,28 @@ func ToMaskString(in interface{}) (out string) {
 
 	return
 }
+
+// in: 입력값 (ex 0xA1b2, 0Xa1B2)
+// dft: 오류(변환실패) 또는 int64 최대 값을 초과한 경우 반환 될 기본값
+func HexToInt64(in string, dft int64) int64 {
+	// Trim spaces
+	in = strings.TrimSpace(in)
+
+	// Remove "0x" or "0X" prefix if exists
+	if strings.HasPrefix(in, "0x") || strings.HasPrefix(in, "0X") {
+		in = in[2:]
+	}
+
+	// Validate: empty string is not allowed
+	if in == "" {
+		return dft
+	}
+
+	// Parse using 16 base
+	out, err := strconv.ParseInt(in, 16, 64)
+	if err != nil {
+		return dft
+	}
+
+	return out
+}
